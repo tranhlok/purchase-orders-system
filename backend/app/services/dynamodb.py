@@ -21,7 +21,7 @@ class DynamoDBService:
         item = {
             'id': str(order_data['id']),
             'date': str(order_data['date']),
-            'type': str(order_data['type']),
+            'status': str(order_data['status']),
             'request_file': str(order_data['request_file']),
             'created_at': str(order_data['created_at']),
             'updated_at': str(order_data['updated_at'])
@@ -64,14 +64,22 @@ class DynamoDBService:
         ]
 
     async def update_order_status(self, order_id: str, new_status: str) -> dict:
-        response = self.table.update_item(
-            Key={'id': order_id},
-            UpdateExpression='SET #type = :type_val, updated_at = :timestamp',
-            ExpressionAttributeNames={'#type': 'type'},
-            ExpressionAttributeValues={
-                ':type_val': new_status,
-                ':timestamp': datetime.utcnow().isoformat()
-            },
-            ReturnValues='ALL_NEW'
-        )
-        return response['Attributes']
+        try:
+            response = self.table.update_item(
+                Key={'id': order_id},
+                UpdateExpression='SET #status = :status, updated_at = :timestamp',
+                ExpressionAttributeNames={
+                    '#status': 'status'
+                },
+                ExpressionAttributeValues={
+                    ':status': new_status,
+                    ':timestamp': datetime.utcnow().isoformat()
+                },
+                ReturnValues='ALL_NEW'
+            )
+            return response['Attributes']
+        except ClientError as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Database error: {str(e)}"
+            )

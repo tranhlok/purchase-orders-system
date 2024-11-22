@@ -1,10 +1,11 @@
-from typing import Optional
+from typing import Optional, Dict
 from datetime import datetime
 import time
-from fastapi import APIRouter, UploadFile, File, Query, HTTPException
+from fastapi import APIRouter, UploadFile, File, Query, HTTPException, Body
 from ..services.dynamodb import DynamoDBService
 from ..services.s3 import S3Service
-
+from ..models.purchase_order import StatusUpdate
+import logging
 router = APIRouter()
 dynamodb_service = DynamoDBService()
 s3_service = S3Service()
@@ -31,7 +32,7 @@ async def create_order(
         order_data = {
             "id": str(order_id),
             "date": datetime.now().strftime("%m/%d/%Y"),
-            "type": "Processing",
+            "status": "Processing",  
             "request_file": str(request_key),
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat()
@@ -62,6 +63,24 @@ async def get_file_url(order_id: str, file_type: str):
     return {"url": url}
 
 @router.patch("/orders/{order_id}/status")
-async def update_order_status(order_id: str, status: str):
-    updated_order = await dynamodb_service.update_order_status(order_id, status)
-    return updated_order
+async def update_order_status(
+    order_id: str,
+    status_update: StatusUpdate = Body(...)  # Explicitly use Body for request body
+):
+    logging.info(f"Received status update request - order_id: {order_id}")
+    logging.info(f"Status update payload: {status_update}")
+    logging.info(f"New status value: {status_update.status}")
+
+    try:
+        updated_order = await dynamodb_service.update_order_status(
+            order_id, 
+            status_update.status
+        )
+        logging.info(f"Successfully updated order: {updated_order}")
+        return updated_order
+    except Exception as e:
+        logging.error(f"Error updating order status: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to update order status: {str(e)}"
+        )

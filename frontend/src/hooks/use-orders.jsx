@@ -25,7 +25,6 @@ export function useOrders() {
     }
   }, []);
 
-  // Update order status
   const updateOrderStatus = useCallback(async (orderId, newStatus) => {
     try {
       const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
@@ -33,16 +32,22 @@ export function useOrders() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ 
+          status: newStatus  // This matches the StatusUpdate model
+        }),
       });
+      
       if (response.ok) {
         await fetchOrders(); // Refresh orders after update
+      } else {
+        throw new Error('Failed to update status');
       }
     } catch (err) {
       console.error('Error updating status:', err);
     }
   }, [fetchOrders]);
 
+  
   // Initial fetch
   useEffect(() => {
     fetchOrders();
@@ -75,7 +80,7 @@ export function useOrders() {
   const filterOrders = useCallback((filters) => {
     return orders.filter(order => {
       const matchesStatus = !filters.status || filters.status === 'all' || 
-        order.type.toLowerCase() === filters.status.toLowerCase();
+        order.status.toLowerCase() === filters.status.toLowerCase();
       const matchesSearch = !filters.search || 
         order.id.toLowerCase().includes(filters.search.toLowerCase());
       return matchesStatus && matchesSearch;
