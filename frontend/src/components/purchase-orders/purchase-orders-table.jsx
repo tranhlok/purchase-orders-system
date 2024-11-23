@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -20,6 +20,10 @@ export function PurchaseOrdersTable({ orders , onOrdersRefresh}) {
       setSelectedRows(new Set(orders.map(order => order.id)))
     }
   }
+
+  useEffect(() => {
+    setSelectedRows(new Set())
+  }, [orders])
 
   const toggleRow = (id) => {
     const newSelected = new Set(selectedRows)
@@ -65,10 +69,12 @@ export function PurchaseOrdersTable({ orders , onOrdersRefresh}) {
       <TableHeader>
         <TableRow>
           <TableHead className="w-[60px] text-center">
-            <Checkbox 
-              checked={selectedRows.size === orders.length}
-              onCheckedChange={toggleAll}
-            />
+            {orders.length > 0 && (
+              <Checkbox 
+                checked={selectedRows.size === orders.length}
+                onCheckedChange={toggleAll}
+              />
+            )}
           </TableHead>
           <TableHead className="w-[120px] text-center">Request ID</TableHead>
           <TableHead className="w-[120px] text-center">Date</TableHead>

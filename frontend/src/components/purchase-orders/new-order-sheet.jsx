@@ -39,6 +39,8 @@ export function NewOrderSheet() {
 
       const result = await response.json()
       console.log('Upload successful:', result)
+      setPdfUrl(null)
+      setRequestFile(null)
       setOpen(false)
       
     } catch (error) {
