@@ -1,40 +1,12 @@
-// "use client"
-
-// import { Button } from "@/components/ui/button"
-// import { ChevronDown } from "lucide-react"
-
-// export function FilterTabs({ activeFilter, onFilterChange }) {
-//   const filters = [
-//     { label: 'All', value: 'all' },
-//     { label: 'Processed', value: 'processed' },
-//     { label: 'Review', value: 'review' },
-//     { label: 'Processing', value: 'processing' },
-//     { label: 'Finalized', value: 'finalized' }
-//   ]
-
-//   return (
-//     <div className="flex gap-2">
-//       {filters.map((filter) => (
-//         <Button
-//           key={filter.value}
-//           variant={activeFilter === filter.value ? "secondary" : "outline"}
-//           onClick={() => onFilterChange(filter.value)}
-//           className="gap-1"
-//         >
-//           {filter.label}
-//           <ChevronDown className="h-4 w-4" />
-//         </Button>
-//       ))}
-//     </div>
-//   )
-// }
-
 "use client"
 
 import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
+import { useOrderFilters } from "@/hooks/useOrderFilters"
 
-export function FilterTabs({ activeFilter, onFilterChange }) {
+export function FilterTabs() {
+  const { statusFilter, setStatusFilter } = useOrderFilters();
+
   const filters = [
     { label: 'All', value: 'all' },
     { label: 'Processed', value: 'processed' },
@@ -44,7 +16,7 @@ export function FilterTabs({ activeFilter, onFilterChange }) {
   ]
 
   const getButtonClass = (value) => {
-    if (activeFilter !== value) return "gap-1"
+    if (statusFilter !== value) return "gap-1"
     
     switch (value) {
       case 'processed':
@@ -65,8 +37,8 @@ export function FilterTabs({ activeFilter, onFilterChange }) {
       {filters.map((filter) => (
         <Button
           key={filter.value}
-          variant={activeFilter === filter.value ? "secondary" : "outline"}
-          onClick={() => onFilterChange(filter.value)}
+          variant={statusFilter === filter.value ? "secondary" : "outline"}
+          onClick={() => setStatusFilter(filter.value)}
           className={getButtonClass(filter.value)}
         >
           {filter.label}

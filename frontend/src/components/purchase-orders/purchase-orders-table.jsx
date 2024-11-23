@@ -6,12 +6,18 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { FileText, CheckCircle2 } from "lucide-react"
+import { useOrderContext } from "@/context/OrderContext"
+import { useOrderFilters } from "@/hooks/useOrderFilters"
 
 const API_BASE_URL = 'http://localhost:8000/api';
 
-
-export function PurchaseOrdersTable({ orders , onOrdersRefresh}) {
+export function PurchaseOrdersTable() {
+  const { state, dispatch } = useOrderContext();
+  const { getFilteredOrders } = useOrderFilters();
   const [selectedRows, setSelectedRows] = useState(new Set())
+  
+  // Get filtered orders using the hook
+  const orders = getFilteredOrders();
 
   const toggleAll = () => {
     if (selectedRows.size === orders.length) {
@@ -23,7 +29,7 @@ export function PurchaseOrdersTable({ orders , onOrdersRefresh}) {
 
   useEffect(() => {
     setSelectedRows(new Set())
-  }, [orders])
+  }, [state.orders, state.filters]) // Changed dependency to state.orders and filters
 
   const toggleRow = (id) => {
     const newSelected = new Set(selectedRows)
@@ -56,9 +62,12 @@ export function PurchaseOrdersTable({ orders , onOrdersRefresh}) {
         throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
       }
   
-      if (onOrdersRefresh) {
-        await onOrdersRefresh();
-      }
+      // Refresh orders through context
+      dispatch({ type: 'SET_LOADING', payload: true });
+      const refreshResponse = await fetch(`${API_BASE_URL}/orders`);
+      const data = await refreshResponse.json();
+      dispatch({ type: 'SET_ORDERS', payload: data });
+      
     } catch (error) {
       console.error('Error updating status:', error.message);
     }

@@ -3,8 +3,19 @@
 import { Search, Copy, Download, Maximize2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useOrderFilters } from "@/hooks/useOrderFilters"
+import { useDebounce } from "@/hooks/useDebounce"
+import { useEffect, useState } from "react"
 
-export function SearchBar({ onSearch, searchQuery }) {
+export function SearchBar() {
+  const { searchQuery, setSearchQuery } = useOrderFilters();
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+  const debouncedSearch = useDebounce(localSearch, 500);
+
+  useEffect(() => {
+    setSearchQuery(debouncedSearch);
+  }, [debouncedSearch, setSearchQuery]);
+
   return (
     <div className="flex gap-4 items-center">
       <div className="relative flex-1">
@@ -12,8 +23,8 @@ export function SearchBar({ onSearch, searchQuery }) {
         <Input
           placeholder="Search Purchase Orders"
           className="pl-9"
-          value={searchQuery}
-          onChange={(e) => onSearch(e.target.value)}
+          value={localSearch}
+          onChange={(e) => setLocalSearch(e.target.value)}
         />
       </div>
       <Button variant="outline" size="icon">
