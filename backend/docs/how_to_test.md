@@ -23,10 +23,10 @@ docker-compose up -d
 # Wait for LocalStack to be ready (about 10-15 seconds)
 
 # Activate the virtual environment
-source env/bin/activate
+source venv/bin/activate
 
 # Run setup script
-python backend/scripts/setup_local.py
+python scripts/setup_local.py
 ```
 
 ### Run the FastAPI server

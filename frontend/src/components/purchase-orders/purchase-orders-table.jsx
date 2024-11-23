@@ -64,58 +64,58 @@ export function PurchaseOrdersTable({ orders , onOrdersRefresh}) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-12">
+          <TableHead className="w-[60px] text-center">
             <Checkbox 
               checked={selectedRows.size === orders.length}
               onCheckedChange={toggleAll}
             />
           </TableHead>
-          <TableHead>Request ID</TableHead>
-          <TableHead>Date</TableHead>
-          <TableHead>Request</TableHead>
-          <TableHead>Response</TableHead>
-          <TableHead>Finalized</TableHead>
-          <TableHead>Status</TableHead>
+          <TableHead className="w-[120px] text-center">Request ID</TableHead>
+          <TableHead className="w-[120px] text-center">Date</TableHead>
+          <TableHead className="w-[100px] text-center">Request</TableHead>
+          <TableHead className="w-[100px] text-center">Response</TableHead>
+          <TableHead className="w-[100px] text-center">Finalized</TableHead>
+          <TableHead className="w-[120px] text-center">Status</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {orders.map((order) => (
           <TableRow key={order.id}>
-            <TableCell>
+            <TableCell className="w-[60px] text-center">
               <Checkbox
                 checked={selectedRows.has(order.id)}
                 onCheckedChange={() => toggleRow(order.id)}
               />
             </TableCell>
-            <TableCell>{order.id}</TableCell>
-            <TableCell>{order.date}</TableCell>
-            <TableCell>
+            <TableCell className="w-[120px] text-center">{order.id}</TableCell>
+            <TableCell className="w-[120px] text-center">{order.date}</TableCell>
+            <TableCell className="w-[100px] text-center">
               <Button variant="ghost" size="icon" className="h-8 w-8">
                 <FileText className="h-4 w-4" />
               </Button>
             </TableCell>
-            <TableCell>
+            <TableCell className="w-[100px] text-center">
               <Button variant="ghost" size="icon" className="h-8 w-8">
                 <FileText className="h-4 w-4" />
               </Button>
             </TableCell>
-            <TableCell>
+            <TableCell className="w-[100px] text-center">
               <Button variant="ghost" size="icon" className="h-8 w-8">
                 <CheckCircle2 className={`h-4 w-4 ${order.status === 'Finalized' ? 'text-green-500' : 'text-gray-300'}`} />
               </Button>
             </TableCell>
-              <TableCell>
-                <select
-                  value={order.status}
-                  onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                  className="border rounded px-2 py-1"
-                >
-                  <option value="Processing">Processing</option>
-                  <option value="Review">Review</option>
-                  <option value="Processed">Processed</option>
-                  <option value="Finalized">Finalized</option>
-                </select>
-              </TableCell>
+            <TableCell className="w-[120px] text-center">
+              <select
+                value={order.status}
+                onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                className="border rounded px-2 py-1"
+              >
+                <option value="Processing">Processing</option>
+                <option value="Review">Review</option>
+                <option value="Processed">Processed</option>
+                <option value="Finalized">Finalized</option>
+              </select>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

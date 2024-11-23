@@ -35,7 +35,7 @@ async def create_test_orders():
         order_data = {
             "id": str(int(datetime.now().timestamp() * 1000) - i),  # Unique ID
             "date": order_date.strftime("%m/%d/%Y"),
-            "type": random.choice(statuses),
+            "status": random.choice(statuses),
             "created_at": order_date.isoformat(),
             "updated_at": order_date.isoformat()
         }
